@@ -1,4 +1,4 @@
-Expense Tracker
+<h1>Expense Tracker</h1>
 
 A simple Expense Tracker project built as part of Phase 0.
 The project demonstrates how a frontend communicates with a backend API and how the backend communicates with a PostgreSQL database.
