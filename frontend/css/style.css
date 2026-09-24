@@ -1,0 +1,8 @@
+/* Your custom styles go here.
+   Use Bootstrap classes first, and write your own CSS only when you need to. */
+#spinnerContainer {
+    height: 300px;
+}
+ .btn-custom-width{
+   width: 100%;
+ }
