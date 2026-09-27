@@ -1,9 +1,8 @@
 # Expense Tracker
 
-A simple Expense Tracker project built as part of **Phase 0**.
-The project demonstrates how a frontend communicates with a backend API and how the backend communicates with a PostgreSQL database.
+A full-stack Expense Tracker application built with **HTML, CSS, JavaScript, Bootstrap, Node.js, Express.js, and PostgreSQL**.
 
----
+The project started with fetching and displaying data on the frontend and was then extended into a complete expense management application with a PostgreSQL database and REST API.
 
 ## Technologies Used
 
@@ -21,14 +20,12 @@ The project demonstrates how a frontend communicates with a backend API and how 
 * Node.js
 * Express.js
 * CORS
-* `pg` (node-postgres)
-* `dotenv`
+* PostgreSQL (`pg`)
+* dotenv
 
 ### Database
 
 * PostgreSQL
-
----
 
 ## Project Structure
 
@@ -36,406 +33,272 @@ The project demonstrates how a frontend communicates with a backend API and how 
 expense-tracker-starter/
 │
 ├── backend/
-│   ├── server.js
+│   ├── expense.js
 │   ├── package.json
-│   └── .env
+│   ├── package-lock.json
+│   └── .env.example
 │
 ├── frontend/
 │   ├── index.html
 │   ├── script.js
 │   └── style.css
 │
+├── .gitignore
 └── README.md
 ```
 
----
+## Features
 
-# How to Run the Project
+The project combines the frontend and backend functionality into one Expense Tracker application.
 
-## 1. Clone the Repository
+### Frontend
 
-Clone the project from GitHub and open it in VS Code.
+* Display expenses
+* Add expenses
+* Edit expenses
+* Delete expenses
+* Communicate with the backend using the Fetch API
+* Display loading states
+* Display error messages
+* Validate user input
+* Format dates as `YYYY-MM-DD`
 
-## 2. Install Backend Dependencies
+### Backend
 
-Open the terminal inside the backend folder:
+* Express.js REST API
+* PostgreSQL database integration
+* CRUD operations for expenses
+* Request validation
+* Error handling
+* CORS configuration
+* Environment variable configuration using dotenv
+* Parameterized SQL queries
 
-```bash
-cd backend
-npm install
+## Expense Categories
+
+The application supports the following expense categories:
+
+* Food
+* Transport
+* Bills
+* Entertainment
+* Other
+
+## API Endpoints
+
+The backend runs on port `3001`.
+
+### Get All Expenses
+
+```http
+GET /api/getAllExpensis
 ```
 
-## 3. Configure PostgreSQL
+Returns all expenses from the database.
 
-Create the PostgreSQL database and the required tables.
+### Get Expense by ID
 
-Create a `.env` file inside the `backend` folder and add the PostgreSQL connection information:
+```http
+GET /api/getExpensById/:id
+```
+
+Example:
+
+```http
+GET /api/getExpensById/2
+```
+
+Returns the expense with the specified ID.
+
+### Add a New Expense
+
+```http
+POST /api/AddNewExpense
+```
+
+Example request body:
+
+```json
+{
+  "title": "Taxi",
+  "amount": 5,
+  "category": "Transport"
+}
+```
+
+The date is generated automatically when the expense is inserted into the database.
+
+### Edit an Expense
+
+```http
+PUT /api/EditExpense
+```
+
+Example request body:
+
+```json
+{
+  "id": 2,
+  "title": "Internet Bill",
+  "amount": 25,
+  "category": "Bills"
+}
+```
+
+### Delete an Expense
+
+```http
+DELETE /api/DeleteExpense/:id
+```
+
+Example:
+
+```http
+DELETE /api/DeleteExpense/2
+```
+
+## Database
+
+The application uses **PostgreSQL** to store expense information.
+
+The `expenses` table contains information such as:
+
+* `id`
+* `title`
+* `amount`
+* `category`
+* `date`
+
+The backend uses the `pg` package to connect to PostgreSQL and execute SQL queries.
+
+## Environment Variables
+
+Database connection information is stored in a `.env` file.
+
+The `.env` file should **not** be committed to GitHub because it contains sensitive information such as the database password.
+
+Create a `.env` file inside the `backend` folder:
 
 ```env
 DB_HOST=localhost
 DB_PORT=5432
 DB_USER=postgres
 DB_PASSWORD=your_password
-DB_NAME=your_database
+DB_Name_TWO=expense_tracker
 ```
 
-> The actual environment variable names should match the ones used in the backend code.
+A `.env.example` file is included to show the required environment variables without exposing the actual password.
 
-## 4. Start the Backend
+## Running the Project
+
+### 1. Clone the Repository
 
 ```bash
-node server.js
+git clone https://github.com/Muhammad2892002/expense-tracker-starter.git
 ```
 
-The Express server will start on the configured port.
+Then open the project in VS Code.
 
-## 5. Run the Frontend
+### 2. Install Backend Dependencies
 
-Open the frontend using **VS Code Live Server** or another local web server.
+Open a terminal inside the `backend` folder:
 
-The frontend communicates with the Express backend using the Fetch API.
-
----
-
-# Phase 0 Tasks
-
-## Task 1 — Fetching Data from an API
-
-For the first task, I used the **JSONPlaceholder API** to retrieve users.
-
-The frontend sends a request using `fetch()` and receives the users as JSON.
-
-The data is then displayed dynamically using JavaScript and Bootstrap cards.
-
-### Fetching the Data
-
-I combined the fetch request and JSON conversion into one statement:
-
-```js
-const allData = await fetch(url).then(response => response.json());
+```bash
+cd backend
+npm install
 ```
 
-This means:
+### 3. Configure PostgreSQL
 
-1. `fetch(url)` sends the HTTP request.
-2. `await` waits for the request to complete.
-3. `.then(response => response.json())` converts the response into JSON.
-4. `allData` contains the resulting data.
-
-### About the Two `await`s
-
-A common way to write the same operation is:
-
-```js
-const response = await fetch(url);
-const data = await response.json();
-```
-
-There are two `await`s because both operations are asynchronous:
-
-* The first waits for the HTTP response.
-* The second waits for the response body to be converted to JSON.
-
-In my implementation, I combined these operations into one statement using `.then()`, so I did **not** use two separate `await`s.
-
-### Displaying the Data
-
-After receiving the users, JavaScript creates the HTML elements dynamically and displays the information using Bootstrap cards.
-
-This helped me practice:
-
-* `fetch()`
-* `async/await`
-* Promises
-* JSON
-* DOM manipulation
-* Bootstrap classes
-
-### Error Handling
-
-I used `try/catch` to handle errors during the request.
-
-If an error occurs, I display a JavaScript `alert()` to inform the user.
-
-> Note: The task requested a Bootstrap alert, but my implementation uses the normal JavaScript `alert()` function.
-
-### Loading Spinner
-
-I also used a Bootstrap spinner while the data is being loaded.
-
-The spinner is hidden after the request finishes.
-
-For example:
-
-```js
-element.classList.add("d-none");
-```
-
-hides the element because Bootstrap's `d-none` class applies:
-
-```css
-display: none;
-```
-
-The class can be removed when the element needs to be shown again:
-
-```js
-element.classList.remove("d-none");
-```
-
----
-
-# Task 2 — Express Server and API Routes
-
-For Task 2, I created a backend using **Node.js and Express.js**.
-
-The Express server provides API endpoints that return JSON responses.
-
-## GET `/api/hello`
-
-This endpoint returns a JSON response.
-
-Example:
-
-```js
-app.get("/api/hello", (req, res) => {
-    res.json({
-        message: "Hello World"
-    });
-});
-```
-
-`res.json()` sends a JavaScript object as a JSON response to the client.
-
----
-
-## GET `/api/expenses`
-
-I created an endpoint that returns expense data.
-
-The response contains expense information such as:
-
-* Name
-* Amount
-* Category
-* Date
-
-Example response:
-
-```json
-[
-    {
-        "name": "Taxi",
-        "amount": 6.00,
-        "category": "Transport",
-        "date": "2026-02-04"
-    },
-    {
-        "name": "Internet bill",
-        "amount": 20.00,
-        "category": "Bills",
-        "date": "2026-02-07"
-    }
-]
-```
-
-The endpoint can be tested directly from a browser or by using a tool such as **Thunder Client**.
-
----
-
-## What Does 404 Mean?
-
-HTTP status code **404** means:
-
-> Not Found
-
-It usually means that the requested resource or route does not exist.
-
-For example, if the server has:
+Create a PostgreSQL database named:
 
 ```text
-/api/expenses
+expense_tracker
 ```
 
-but the client requests:
+Create the required `expenses` table.
+
+Then create a `.env` file inside the `backend` folder and add your PostgreSQL connection information:
+
+```env
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=your_password
+DB_Name_TWO=expense_tracker
+```
+
+### 4. Start the Backend
+
+From the `backend` folder:
+
+```bash
+node expense.js
+```
+
+The Express server will run on:
 
 ```text
-/api/unknown
+http://localhost:3001
 ```
 
-Express can return a 404 response.
+### 5. Run the Frontend
 
-A 404 can also occur when trying to retrieve a specific resource that does not exist.
+Open the `frontend/index.html` using **VS Code Live Server** or another local web server.
 
----
+The frontend communicates with the Express backend through the API endpoints.
+
+## Application Flow
+
+```text
+Frontend
+   ↓
+Fetch API
+   ↓
+Express.js
+   ↓
+API Route
+   ↓
+PostgreSQL Query
+   ↓
+PostgreSQL Database
+   ↓
+Query Result
+   ↓
+Express.js
+   ↓
+JSON Response
+   ↓
+Frontend
+```
 
 ## CORS
 
-I experimented with CORS to understand how the frontend and backend communicate when they run on different origins.
+The backend uses the `cors` package to allow the frontend to communicate with the Express API from a different origin.
 
-I used the `cors` package:
-
-```js
+```javascript
 const cors = require("cors");
 
 app.use(cors());
 ```
 
-CORS allows the backend to accept requests from other origins when configured appropriately.
+## HTTP Methods Used
 
----
+| Method | Purpose                    |
+| ------ | -------------------------- |
+| GET    | Retrieve expenses          |
+| POST   | Add a new expense          |
+| PUT    | Update an existing expense |
+| DELETE | Delete an expense          |
 
-# Task 3 — Express + PostgreSQL
+## HTTP Status Codes Used
 
-For Task 3, I connected the Express backend to a PostgreSQL database.
-
-I used:
-
-```bash
-npm install pg dotenv
-```
-
-### `pg`
-
-The `pg` package allows Node.js to communicate with PostgreSQL.
-
-### `dotenv`
-
-The `dotenv` package allows environment variables to be loaded from a `.env` file.
-
-This is useful for keeping database configuration outside the source code.
-
----
-
-# PostgreSQL Connection
-
-I used PostgreSQL connection information through environment variables.
-
-The backend creates a PostgreSQL connection/pool and uses it to execute SQL queries.
-
-The general flow is:
-
-```text
-Express Route
-      ↓
-PostgreSQL Query
-      ↓
-Database
-      ↓
-Query Result
-      ↓
-JSON Response
-```
-
----
-
-# Querying Data
-
-The backend can execute SQL queries against PostgreSQL and return the results to the frontend.
-
-For example:
-
-```js
-const result = await pool.query("SELECT * FROM expenses");
-```
-
-The returned rows can then be sent as JSON:
-
-```js
-res.json(result.rows);
-```
-
----
-
-# Route Parameters
-
-I also practiced using route parameters to retrieve a specific record.
-
-For example:
-
-```text
-/api/expenses/5
-```
-
-The route can be defined as:
-
-```js
-app.get("/api/expenses/:id", async (req, res) => {
-    const id = req.params.id;
-});
-```
-
-Here:
-
-```js
-req.params.id
-```
-
-gets the value from the URL.
-
-If the frontend requests:
-
-```text
-/api/expenses/5
-```
-
-then:
-
-```js
-req.params.id
-```
-
-will contain:
-
-```text
-5
-```
-
----
-
-# Parameterized SQL Queries
-
-I learned how to use parameterized queries with PostgreSQL.
-
-Example:
-
-```js
-const result = await pool.query(
-    "SELECT * FROM expenses WHERE expense_id = $1",
-    [id]
-);
-```
-
-`$1` is a placeholder for the value.
-
-The actual value is supplied separately:
-
-```js
-[id]
-```
-
-This is important because it helps protect the application from **SQL injection**.
-
-Instead of directly inserting user input into the SQL string, the database driver handles the parameter separately.
-
----
-
-# Handling Missing Records
-
-If the requested expense does not exist, the API should return a `404 Not Found` response.
-
-For example:
-
-```js
-if (result.rows.length === 0) {
-    return res.status(404).json({
-        message: "Expense not found"
-    });
-}
-```
-
-The `return` is important because it stops the function from continuing after sending the response.
-
----
+| Status Code | Meaning                        |
+| ----------- | ------------------------------ |
+| 200         | Request completed successfully |
+| 201         | Expense created successfully   |
+| 400         | Invalid request or input       |
+| 404         | Expense not found              |
+| 500         | Server error                   |
 
 
