@@ -6,3 +6,9 @@
  .btn-custom-width{
    width: 100%;
  }
+ .add-expense{
+  height: 100%;
+ }
+ .nav-row{
+  width: 100% !important;
+ }

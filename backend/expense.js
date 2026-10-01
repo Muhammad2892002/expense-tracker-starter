@@ -1,5 +1,6 @@
+require("dotenv").config();
 
-let categoryArray = ["Food", "Transport", "Bills", "Entertainment", "Other"]
+let categoryArray = ["Food", "Transport", "Bills", "Entertainment", "Other"];
 const myExpress = require("express");
 
 const app = myExpress();
@@ -7,7 +8,7 @@ const cors = require("cors");
 const { Client } = require("pg");
 app.use(cors());
 app.use(myExpress.json());
-require("dotenv").config();
+
 const client = new Client({
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
@@ -63,6 +64,9 @@ app.post("/api/AddNewExpense", async (req, res) => {
     try {
 
         let Errmessage = checkExpense(req.body);
+        console.log(req.body);
+      
+       
   
      
         if (Errmessage === "") {
@@ -89,6 +93,11 @@ app.put("/api/EditExpense", async (req, res) => {
     try {
         let reqBody = await req.body;
       let Errmessage = checkExpense(reqBody);
+       console.log("Id is below");
+        console.log(reqBody.id);
+        if(isNaN(reqBody.id)){
+            Errmessage+="Id must be a number";
+        }
       if(Errmessage===""){
 
         let editExpense = await updateExpense(reqBody);
@@ -139,7 +148,7 @@ app.delete("/api/DeleteExpense/:id", async (req, res) => {
     }
 });
 async function AddNewExpense(obj) {
-    let isAddeddSusscessfully = await client.query("INSERT INTO expenses(title,amount,category,date) VALUES($1,$2,$3,NOW())", [obj.title, obj.amount, obj.category]);
+    let isAddeddSusscessfully = await client.query("INSERT INTO expenses(title,amount,category,date) VALUES($1,$2,$3,$4)", [obj.title, obj.amount, obj.category,obj.date]);
     return isAddeddSusscessfully > 0;
 }
 async function checkConnection() {
@@ -205,7 +214,7 @@ async function getExpenseById(Id) {
 }
 async function updateExpense(obj) {
     try{
-    let isUpdated = await client.query("UPDATE expenses SET title=$1, amount=$2, category=$3 WHERE id=$4", [obj.title, obj.amount, obj.category, obj.id]);
+    let isUpdated = await client.query("UPDATE expenses SET title=$1, amount=$2, category=$3, date=$5 WHERE id=$4", [obj.title, obj.amount, obj.category, obj.id, obj.date]);
     console.log(isUpdated.rows);
     return isUpdated.rowCount > 0;
     }
