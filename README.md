@@ -11,6 +11,7 @@ The data is saved in **PostgreSQL**. A **Node.js + Express** backend exposes a R
 ## Features
 
 - Add an expense (title, amount, category, date) with validation and clear error messages
+- Date validation: the date is required and must be a valid date
 - See all expenses in a table, with a coloured badge for each category
 - Filter by category (Food, Transport, Bills, Entertainment, Other, or All)
 - Edit an expense in a Bootstrap modal
@@ -19,7 +20,6 @@ The data is saved in **PostgreSQL**. A **Node.js + Express** backend exposes a R
 - Loading spinner while data loads
 - Clear alerts for errors (including when the server is off)
 - Responsive design (phone and desktop), summary cards built with CSS Grid
-- One page with four options: **Task 1**, **Task 2**, **Task 3**, and **Expense Tracker**
 
 ## Tech Stack
 
@@ -45,19 +45,6 @@ expense-tracker/
 │   └── .env.example      # example of the environment file
 └── README.md
 ```
-
----
-
-## The Four Options on the Page
-
-The main page has four options. Click an option to open its section:
-
-| Option | What it shows |
-|--------|---------------|
-| **Task 1** | Data from a public API, fetched with `fetch` and shown in Bootstrap cards |
-| **Task 2** | An Express server with a route that returns JSON |
-| **Task 3** | Express connected to PostgreSQL, reading a practice table with `pg` and parameters |
-| **Expense Tracker** | The full project: add, edit, delete, and filter expenses, with summary cards |
 
 ---
 
@@ -122,8 +109,8 @@ Keep the terminal open. The API runs at `http://localhost:3000`.
 
 1. Open the `frontend` folder in VS Code.
 2. Right-click `index.html` and choose **Open with Live Server**.
-3. The app opens in your browser. Choose one of the four options: Task 1, Task 2, Task 3, or Expense Tracker.
-4. The server must be running for Task 2, Task 3, and Expense Tracker, or you will see an error alert.
+3. The app opens in your browser.
+4. The server must be running, or you will see an error alert.
 
 Bootstrap is loaded in the front-end only. It is not an npm package of the backend.
 
@@ -162,14 +149,19 @@ Base URL: `http://localhost:3000`
 ```
 
 - `id` is created by the database.
+- `title` is required.
 - `category` must be one of: `Food`, `Transport`, `Bills`, `Entertainment`, `Other`.
 - `amount` must be a number greater than 0.
-- `date` is returned as `YYYY-MM-DD`.
+- `date` is required, must be a valid date, and is returned as `YYYY-MM-DD`.
 
-### Example error (400)
+### Example errors (400)
 
 ```json
 { "message": "Amount must be a number greater than 0" }
+```
+
+```json
+{ "message": "Date is required and must be a valid date (YYYY-MM-DD)" }
 ```
 
 ---
@@ -178,6 +170,7 @@ Base URL: `http://localhost:3000`
 
 - **Server side:** missing or wrong data returns `400` with a clear message. An id that is not valid or does not exist returns `404`.
 - **Front-end:** the form does not accept empty fields or an amount of zero or less.
+- **Date validation:** the date cannot be empty and must be a real date (for example, `2026-02-30` is rejected).
 - **SQL injection protection:** every query uses parameters (`$1`, `$2`), and user data is never joined into the SQL text.
 - **CORS** is enabled so the front-end can talk to the server.
 
