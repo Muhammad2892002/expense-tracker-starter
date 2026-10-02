@@ -292,6 +292,7 @@ async function getAllExpenses() {
 }
 async function renderAllExpense() {
   expenseConatiner.innerHTML = "";
+   ContainerBody.innerHTML="";
   // numOfExpense;
 
   H3DisplaySum.innerText = totalExpense.toFixed(2);
@@ -312,6 +313,7 @@ async function renderAllExpense() {
                       
                       </td>
                     </tr>`;
+                     
     RenderDeleteModal(exp);
     RenderEditModal(exp);
 
@@ -363,6 +365,7 @@ function RenderDeleteModal(obj) {
 
 }
 function RenderEditModal(obj) {
+
   ContainerBody.insertAdjacentHTML("beforeend", ` <div class="modal fade" id="editModal-${obj.id}" tabindex="-1"
       aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -390,7 +393,7 @@ function RenderEditModal(obj) {
             <div class="row">
               <div class="col-md-6">
                 <label class="form-label">Date :</label>
-                <input type="date" name="date" value="${obj.date}" class="form-control edt-inp-${obj.id}">
+                <input min="2020-01-01" max="2027-12-31"  type="date" name="date" value="${obj.date}" class="form-control edt-inp-${obj.id}">
               </div>
               <div class="col-md-6">
                 <label class="form-label">Category :</label>
@@ -411,6 +414,7 @@ function RenderEditModal(obj) {
       </div>
     </div>`);
   let editSelect = document.getElementById(`Edit-Modal-select-${obj.id}`);
+  editSelect.innerHTML = "";
   categoryArray.forEach(cat => {
     let isSelected = obj.category === cat;
     if (isSelected) {
@@ -424,7 +428,7 @@ function RenderEditModal(obj) {
 console.log(editForm);
   editForm.addEventListener("submit", function (e) {
     let editInObj={};
-    alert("edit form submitted");
+   
     e.preventDefault();
     let allEditInputs = document.querySelectorAll(`.edt-inp-${obj.id}`);
     allEditInputs.forEach(inp=>{
@@ -457,6 +461,7 @@ addExpenseForm.addEventListener("submit", function (e) {
 
 })
 async function AddExpense(expObj) {
+
   let addingResult = await fetch("http://localhost:3001/api/AddNewExpense", {
     method: "POST",
     headers: {
@@ -469,6 +474,7 @@ async function AddExpense(expObj) {
    allFormInputs.forEach(inp=>{
     inp.value="";
    })
+     await getAllExpenses();
   UserOption();
 
 
@@ -481,9 +487,11 @@ async function EditExpense(expObj){
   }).then(res=>res.json());
   alert(result.message);
    chooseTask.value = "exp_tracker";
-  UserOption();
-  let editCloseModalBtn = document.getElementById(`closeEditModal-${expObj.id}`);
+     let editCloseModalBtn = document.getElementById(`closeEditModal-${expObj.id}`);
   editCloseModalBtn.click();
+    await getAllExpenses();
+  UserOption();
+
 }
 async function DeleteExpense(id) {
   let DeleteResult = await fetch(`http://localhost:3001/api/DeleteExpense/${id}`, {
@@ -498,6 +506,8 @@ async function DeleteExpense(id) {
   let deleteCloseModalBtn = document.getElementById(`closeDeleteModal-${id}`);
   deleteCloseModalBtn.click();
   chooseTask.value = "exp_tracker";
+   await getAllExpenses();
+
   UserOption();
 
 }
@@ -540,7 +550,8 @@ categorySort.addEventListener("change",async function(){
    allExpenses = allExpenses.filter(exp=>{return exp.category===categoryValue});
    console.log(allExpenses.length);
   }
-  renderAllExpense();
+   
+ await renderAllExpense();
 })
 
 window.addEventListener("load", async function () {

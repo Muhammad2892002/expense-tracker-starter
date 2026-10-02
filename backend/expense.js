@@ -148,8 +148,17 @@ app.delete("/api/DeleteExpense/:id", async (req, res) => {
     }
 });
 async function AddNewExpense(obj) {
+    try{
+    let date = new Date(obj.date);
+    date.setDate(date.getDate() + 1);
+    obj.date = date.toISOString().split("T")[0];
     let isAddeddSusscessfully = await client.query("INSERT INTO expenses(title,amount,category,date) VALUES($1,$2,$3,$4)", [obj.title, obj.amount, obj.category,obj.date]);
+  
     return isAddeddSusscessfully > 0;
+    }
+    catch(error){
+       throw new Error(error.message);
+    }
 }
 async function checkConnection() {
     try {
@@ -157,7 +166,7 @@ async function checkConnection() {
         console.log("Conncted");
     }
     catch (error) {
-        console.log(error.message);
+        throw new Error("Failed to connect to database: " + error.message);
     }
 }
 app.listen(3001, async () => {
@@ -165,6 +174,7 @@ app.listen(3001, async () => {
     await checkConnection();
 });
 async function getAllExpensesFromDB() {
+    try{
 
     let allData = await client.query("SELECT * from expenses ORDER BY id DESC ");
      let allFormatedData;
@@ -183,6 +193,10 @@ async function getAllExpensesFromDB() {
     }
     console.log(allFormatedData);
     return await allFormatedData;
+}
+catch(error){
+    throw new Error(error.message);
+}
 
 
 }
@@ -208,24 +222,33 @@ async function getExpenseById(Id) {
         return formatedData;
     }
     catch (error) {
-         return{message:error.message};
+       throw new Error(error.message);
     }
 
 }
 async function updateExpense(obj) {
     try{
+           let date = new Date(obj.date);
+    date.setDate(date.getDate() + 1);
+    obj.date = date.toISOString().split("T")[0];
+
     let isUpdated = await client.query("UPDATE expenses SET title=$1, amount=$2, category=$3, date=$5 WHERE id=$4", [obj.title, obj.amount, obj.category, obj.id, obj.date]);
     console.log(isUpdated.rows);
     return isUpdated.rowCount > 0;
     }
     catch(error){
-        return{message:error.message}; 
+        throw new Error(error.message);
     }
 
 }
 async function DeleteExpense(id) {
+    try{
     let isDeleted = await client.query("DELETE FROM expenses WHERE id=$1", [id]);
     return isDeleted.rowCount > 0;
+    }
+    catch(error){
+        throw new Error(error.message);
+    }
 }
 function checkExpense(NewExpenseObj){
     let msg="";
@@ -241,6 +264,13 @@ function checkExpense(NewExpenseObj){
         }
         if (!categoryArray.includes(NewExpenseObj.category.trim())) {
             msg += "please enter valid category\n";
+        }
+        let date=NewExpenseObj.date.trim();
+        if(date===""){
+            msg+="please enter valid date\n";
+        }
+        if(date!=="" && (date>"2027-12-31"||date<"2020-01-01")){
+            msg+="date must be between 2020-01-01 and 2027-12-31\n";
         }
         return msg
 }
