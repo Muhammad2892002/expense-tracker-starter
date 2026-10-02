@@ -14,7 +14,7 @@ const client = new Client({
     port: process.env.DB_PORT,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    database: process.env.DB_Name_TWO
+    database: process.env.DB_Name
 
 
 
@@ -271,6 +271,10 @@ function checkExpense(NewExpenseObj){
         }
         if(date!=="" && (date>"2027-12-31"||date<"2020-01-01")){
             msg+="date must be between 2020-01-01 and 2027-12-31\n";
+        }
+        let dateRegex=/^\d{4}-\d{2}-\d{2}$/;
+        if(dateRegex.test(date)===false){
+            msg+="date must be in format YYYY-MM-DD\n";
         }
         return msg
 }
