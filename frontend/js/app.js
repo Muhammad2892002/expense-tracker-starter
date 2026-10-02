@@ -53,221 +53,11 @@ let numOfExpense;
 let HighestExpense;
 let expenseObj = {};
 let editExpenseObj = {};
-chooseTask.addEventListener("change", UserOption);
-
-
-async function UserOption() {
-  let user_choise = chooseTask.value;
-  switch (user_choise) {
-    case "task1": { await fetchDataToTask1(); task3Choise.hidden = true; expense_tracker_container.hidden = true; break; }
-    case "task2": { await fetchDataInTask2(); task3Choise.hidden = true; expense_tracker_container.hidden = true; break; }
-    case "task3": { mainCard.innerHTML = ""; task3Choise.hidden = false; expense_tracker_container.hidden = true; break; }
-    case "exp_tracker": { mainCard.innerHTML = ""; renderAllExpense(); task3Choise.hidden = true; expense_tracker_container.hidden = false; break; }
-  }
-
-
-}
-async function fetchDataToTask1() {
-  try {
-    let allData = await fetch("https://jsonplaceholder.typicode.com/users").then(res => res.json());
-    Rendertask1(allData);
-  }
-  catch (error) {
-    alert(error.message);
-  }
-}
-
-async function Rendertask1(allData) {
-
-  mainCard.innerHTML = "";
-  spinner.classList.remove("d-none");
-  try {
-
-
-    allData.forEach(data => {
-      mainCard.innerHTML += `   <div class="col-md-4">
-        <div class="card">
-
-  <div class="card-body">
-    <h5 class="card-title">Id:${data.id}</h5>
-        <p class="card-text">Name: ${data.name}</p>
-      <p class="card-text">email:${data.email}</p>
-       <p class="card-text">city : ${data.address.city}:</p>
-        <p class="card-text">Company Name : ${data.company.name}</p>
-        
-  
-  </div>
-</div>
-      </div>`;
-
-
-
-    });
-  }
-  catch (error) {
-    alert(error.message);
-  }
-  finally {
-    spinner.classList.add("d-none");
-  }
-
-}
-async function fetchDataInTask2() {
-  try {
-    let result = await fetch("http://localhost:3000/api/hello").then(res => res.json());
-    let expenses = await fetch("http://localhost:3000/api/expenses").then(res => res.json());
-
-    Rendertask2Greeting(await result);
-    Rendertask2Expenses(await expenses);
-  }
-  catch (error) {
-    alert(error.message)
-  }
-
-}
-async function Rendertask2Greeting(result) {
-  mainCard.innerHTML = "";
-  spinner.classList.remove("d-none");
-  try {
-
-
-    mainCard.innerHTML += `   <div class="col-md-12">
-        <div class="card">
-
-  <div class="card-body">
-    <h5 class="card-title"> Massage</h5>
-        <p class="card-text">Title :${result.title} </p>
-        <p class="card-text">Message : ${result.message} </p>
-  
-  
-  </div>
-</div>
-      </div>`;
-  }
-  catch (error) {
-    alert(error.message);
-  }
-  finally {
-    spinner.classList.add("d-none");
-
-  }
 
 
 
 
 
-}
-
-async function Rendertask2Expenses(result) {
-
-  spinner.classList.remove("d-none");
-  try {
-
-    result.forEach(item => {
-      mainCard.innerHTML += `      <div class="col-md-6 mt-2">
-        <div class="card">
-
-  <div class="card-body">
-    <h5 class="card-title">Expense Name:${item.name}</h5>
-    <p class="card-text">Category:${item.category}</p>
-    <p class="card-text">Ammount:<span class="text-danger">${item.amount}$</span></p>
-    <p class="card-text"> Date :${item.date}</p>
-  
-  </div>
-</div>
-      </div>`;
-
-    });
-
-  }
-  catch (error) {
-    alert(error.message);
-  }
-  finally {
-    spinner.classList.add("d-none");
-
-  }
-
-
-
-
-
-}
-async function loadAllStdFromDB() {
-
-  let allStd = await fetch("http://localhost:3000/api/getAllStd").then(res => res.json());
-  RenderTask3(allStd);
-}
-function RenderTask3(allStd) {
-  mainCard.innerHTML = "";
-  spinner.classList.remove("d-none");
-  try {
-    allStd.forEach(std => {
-      mainCard.innerHTML += `   <div class="col-md-12 mt-2 ">
-        <div class="card" >
-
-  <div class="card-body">
-    <h5 class="card-title text-center">${std.std_id}-${std.std_name}</h5>
- 
-  </div>
-</div>
-      </div>`
-    });
-
-  }
-  catch (error) {
-    alert(error.message);
-  }
-  finally {
-    spinner.classList.add("d-none");
-  }
-}
-loadBtn.addEventListener("click", loadAllStdFromDB);
-
-stdInputId.addEventListener("input", () => {
-  let inputVal = stdInputId.value;
-  getStdById(inputVal);
-});
-async function getStdById(id) {
-  try {
-    let std = await fetch(`http://localhost:3000/api/getStdById/${id}`).then(res => res.json());
-    if ("message" in std) {
-      RenderError(await std)
-    }
-    else {
-      RenderTask3(await std);
-    }
-  }
-  catch (error) {
-    console.log(error.message);
-  }
-
-}
-
-function RenderError(std) {
-  mainCard.innerHTML = "";
-  spinner.classList.remove("d-none");
-  try {
-
-    mainCard.innerHTML += `   <div class="col-md-12 mt-2 ">
-        <div class="card" >
-
-  <div class="card-body">
-    <h5 class="card-title text-center text-danger">${std.message}}</h5>
- 
-  </div>
-</div>
-      </div>`
-      ;
-
-  }
-  catch (error) {
-    alert(error.message);
-  }
-  finally {
-    spinner.classList.add("d-none");
-  }
-}
 async function getAllExpenses() {
   allExpenses = await fetch("http://localhost:3001/api/getAllExpensis").then(res => res.json());
   if ("message" in allExpenses) {
@@ -283,16 +73,14 @@ async function getAllExpenses() {
     HighestExpense = allExpenses.reduce((max, expense) => {
       return (Number(expense.amount) > Number(max.amount) ? expense : max)
     }, allExpenses[0]);
-    console.log(numOfExpense);
-    console.log(totalExpense.toFixed(0));
-    console.log(HighestExpense);
+   
   }
 
 
 }
 async function renderAllExpense() {
   expenseConatiner.innerHTML = "";
-   ContainerBody.innerHTML="";
+  ContainerBody.innerHTML = "";
   // numOfExpense;
 
   H3DisplaySum.innerText = totalExpense.toFixed(2);
@@ -313,7 +101,7 @@ async function renderAllExpense() {
                       
                       </td>
                     </tr>`;
-                     
+
     RenderDeleteModal(exp);
     RenderEditModal(exp);
 
@@ -425,24 +213,24 @@ function RenderEditModal(obj) {
     }
   });
   let editForm = document.getElementById(`editForm-${obj.id}`);
-console.log(editForm);
+  console.log(editForm);
   editForm.addEventListener("submit", function (e) {
-    let editInObj={};
-   
+    let editInObj = {};
+
     e.preventDefault();
     let allEditInputs = document.querySelectorAll(`.edt-inp-${obj.id}`);
-    allEditInputs.forEach(inp=>{
-      let inpName=inp.name;
-          switch (inpName) {
-      case "title": { editInObj.title = inp.value; break; }
-      case "amount": { editInObj.amount = inp.value; break; }
-      case "date": { editInObj.date = inp.value; break; }
-      case "category": { editInObj.category = inp.value; break; }
-      case "id": { editInObj.id = inp.value; break; }
-    }
+    allEditInputs.forEach(inp => {
+      let inpName = inp.name;
+      switch (inpName) {
+        case "title": { editInObj.title = inp.value; break; }
+        case "amount": { editInObj.amount = inp.value; break; }
+        case "date": { editInObj.date = inp.value; break; }
+        case "category": { editInObj.category = inp.value; break; }
+        case "id": { editInObj.id = inp.value; break; }
+      }
     });
     EditExpense(editInObj);
-    
+
   })
 }
 addExpenseForm.addEventListener("submit", function (e) {
@@ -470,27 +258,27 @@ async function AddExpense(expObj) {
     body: JSON.stringify(expObj)
   }).then(res => res.json());
   alert(addingResult.message);
-   chooseTask.value = "exp_tracker";
-   allFormInputs.forEach(inp=>{
-    inp.value="";
-   })
-     await getAllExpenses();
-  UserOption();
+
+  allFormInputs.forEach(inp => {
+    inp.value = "";
+  })
+  await getAllExpenses();
+   await renderAllExpense();
 
 
 }
-async function EditExpense(expObj){
-  let result=await fetch("http://localhost:3001/api/EditExpense",{
-    method:"PUT",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify(expObj)
-  }).then(res=>res.json());
+async function EditExpense(expObj) {
+  let result = await fetch("http://localhost:3001/api/EditExpense", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(expObj)
+  }).then(res => res.json());
   alert(result.message);
-   chooseTask.value = "exp_tracker";
-     let editCloseModalBtn = document.getElementById(`closeEditModal-${expObj.id}`);
+
+  let editCloseModalBtn = document.getElementById(`closeEditModal-${expObj.id}`);
   editCloseModalBtn.click();
-    await getAllExpenses();
-  UserOption();
+  await getAllExpenses();
+  await renderAllExpense();
 
 }
 async function DeleteExpense(id) {
@@ -505,57 +293,65 @@ async function DeleteExpense(id) {
   let modalElement = document.getElementById(`deleteModal-${id}`);
   let deleteCloseModalBtn = document.getElementById(`closeDeleteModal-${id}`);
   deleteCloseModalBtn.click();
-  chooseTask.value = "exp_tracker";
-   await getAllExpenses();
 
-  UserOption();
+  await getAllExpenses();
+
+   await renderAllExpense();
 
 }
-sortByTitle.addEventListener("change",function(){
- sortByTitleValue=sortByTitle.value;
- console.log(sortByTitleValue);
- switch (sortByTitleValue) {
-  case "asc":{
-    allExpenses.sort((a,z)=>{return a.title.localeCompare(z.title)});
-    console.log(allExpenses);
-     renderAllExpense();
-      break;}
-  case "desc":{allExpenses.sort((a,z)=>{return z.title.localeCompare(a.title)});
-   console.log(allExpenses);
-   renderAllExpense();
-    break;}
-  
- }
+sortByTitle.addEventListener("change", function () {
+  sortByTitleValue = sortByTitle.value;
+  console.log(sortByTitleValue);
+  switch (sortByTitleValue) {
+    case "asc": {
+      allExpenses.sort((a, z) => { return a.title.localeCompare(z.title) });
+      console.log(allExpenses);
+      renderAllExpense();
+      break;
+    }
+    case "desc": {
+      allExpenses.sort((a, z) => { return z.title.localeCompare(a.title) });
+      console.log(allExpenses);
+      renderAllExpense();
+      break;
+    }
+
+  }
 
 });
-sortByDate.addEventListener("change",function(){
-  sortByDateValue=sortByDate.value;
-   switch (sortByDateValue) {
-  case "asc":{
-    allExpenses.sort((a,z)=>{return a.date.localeCompare(z.date)});
-    console.log(allExpenses);
-     renderAllExpense();
-      break;}
-  case "desc":{allExpenses.sort((a,z)=>{return z.date.localeCompare(a.date)});
-   console.log(allExpenses);
-   renderAllExpense();
-    break;}
-  
- }
-});
-categorySort.addEventListener("change",async function(){
-   await getAllExpenses();
-  let categoryValue=categorySort.value;
-  if(categoryValue!=="all"){
-   allExpenses = allExpenses.filter(exp=>{return exp.category===categoryValue});
-   console.log(allExpenses.length);
+sortByDate.addEventListener("change", function () {
+  sortByDateValue = sortByDate.value;
+  switch (sortByDateValue) {
+    case "asc": {
+      allExpenses.sort((a, z) => { return a.date.localeCompare(z.date) });
+      console.log(allExpenses);
+      renderAllExpense();
+      break;
+    }
+    case "desc": {
+      allExpenses.sort((a, z) => { return z.date.localeCompare(a.date) });
+      console.log(allExpenses);
+      renderAllExpense();
+      break;
+    }
+
   }
-   
- await renderAllExpense();
+});
+categorySort.addEventListener("change", async function () {
+  await getAllExpenses();
+  let categoryValue = categorySort.value;
+  if (categoryValue !== "all") {
+    allExpenses = allExpenses.filter(exp => { return exp.category === categoryValue });
+    console.log(allExpenses.length);
+  }
+
+  await renderAllExpense();
+
 })
 
 window.addEventListener("load", async function () {
-   await getAllExpenses();
+  await getAllExpenses();
+  renderAllExpense();
   let allOptions = document.querySelectorAll(".category-selection");
   for (let optionSelector = 0; optionSelector < allOptions.length; optionSelector++) {
     let selectEle = allOptions[optionSelector];
@@ -565,7 +361,7 @@ window.addEventListener("load", async function () {
     console.log(selectEle);
   }
 
-}); 
+});
 
 
 
